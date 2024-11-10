@@ -1,0 +1,71 @@
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+    <!-- Main Window Background -->
+    <rect x="0" y="0" width="1000" height="700" fill="#1E1E1E" stroke="#1E1E1E" stroke-width="2"/>
+
+    <!-- Top Menu Bar -->
+    <rect x="0" y="0" width="1000" height="30" fill="#2D2D2D" stroke="#2D2D2D"/>
+    <text x="20" y="20" font-family="Arial" font-size="14" fill="#CCCCCC">File</text>
+    <text x="70" y="20" font-family="Arial" font-size="14" fill="#CCCCCC">Edit</text>
+    <text x="120" y="20" font-family="Arial" font-size="14" fill="#CCCCCC">View</text>
+    <text x="170" y="20" font-family="Arial" font-size="14" fill="#CCCCCC">Help</text>
+
+    <!-- Left Panel - Tileset & Categories -->
+    <rect x="10" y="40" width="240" height="650" fill="#252526" stroke="#353535"/>
+    <rect x="10" y="40" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
+    <text x="20" y="60" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Tileset</text>
+
+    <!-- Tileset Preview Area -->
+    <rect x="20" y="80" width="220" height="220" fill="#1E1E1E" stroke="#454545" stroke-dasharray="4"/>
+    <text x="85" y="180" font-family="Arial" font-size="12" fill="#666666">Tileset Preview</text>
+
+    <!-- Categories Section -->
+    <rect x="10" y="310" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
+    <text x="20" y="330" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Categories</text>
+    <rect x="20" y="350" width="220" height="330" fill="#1E1E1E" stroke="#454545"/>
+
+    <!-- Center Panel - Room Preview -->
+    <rect x="260" y="40" width="480" height="650" fill="#252526" stroke="#353535"/>
+    <rect x="260" y="40" width="480" height="30" fill="#2D2D2D" stroke="#353535"/>
+    <text x="270" y="60" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Room Preview</text>
+
+    <!-- Room Preview Area -->
+    <rect x="270" y="80" width="460" height="600" fill="#1E1E1E" stroke="#454545" stroke-dasharray="4"/>
+    <text x="450" y="350" font-family="Arial" font-size="12" fill="#666666">Generated Room Preview</text>
+
+    <!-- Right Panel - Rules & Settings -->
+    <rect x="750" y="40" width="240" height="650" fill="#252526" stroke="#353535"/>
+
+    <!-- Generation Settings -->
+    <rect x="750" y="40" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
+    <text x="760" y="60" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Generation Settings</text>
+
+    <!-- Room Size Controls -->
+    <rect x="760" y="80" width="220" height="100" fill="#1E1E1E" stroke="#454545"/>
+    <text x="770" y="100" font-family="Arial" font-size="12" fill="#CCCCCC">Room Size</text>
+
+    <!-- Generation Rules -->
+    <rect x="750" y="190" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
+    <text x="760" y="210" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Rules</text>
+    <rect x="760" y="230" width="220" height="250" fill="#1E1E1E" stroke="#454545"/>
+
+    <!-- Generation Controls -->
+    <rect x="750" y="490" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
+    <text x="760" y="510" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Controls</text>
+
+    <!-- Buttons -->
+    <rect x="760" y="530" width="220" height="150" fill="#1E1E1E" stroke="#454545"/>
+
+    <!-- Modern Buttons with Hover Effect -->
+    <rect x="770" y="540" width="200" height="30" fill="#2C7A3D" rx="5"/>
+    <text x="845" y="560" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Generate</text>
+
+    <rect x="770" y="580" width="200" height="30" fill="#264F78" rx="5"/>
+    <text x="845" y="600" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Save Configuration</text>
+
+    <rect x="770" y="620" width="200" height="30" fill="#264F78" rx="5"/>
+    <text x="845" y="640" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Load Configuration</text>
+
+    <!-- Panel Borders to create subtle separation -->
+    <line x1="250" y1="30" x2="250" y2="700" stroke="#353535" stroke-width="1"/>
+    <line x1="740" y1="30" x2="740" y2="700" stroke="#353535" stroke-width="1"/>
+</svg>
