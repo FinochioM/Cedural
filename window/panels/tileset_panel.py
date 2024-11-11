@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QLabel,
-                               QFileDialog, QSizePolicy, QScrollArea, QHBoxLayout)
+                               QFileDialog, QSizePolicy, QScrollArea, QHBoxLayout, QComboBox)
 from PySide6.QtGui import QPixmap, QImage, QPainter, QPen, QColor
 from PySide6.QtCore import Qt, QRect, Signal
 from PIL import Image
@@ -9,10 +9,9 @@ from .base_panel import BasePanel
 
 class TilePreview(QLabel):
     """Widget to display the currently selected tile"""
-
     def __init__(self):
         super().__init__()
-        self.setMinimumSize(84, 84)  # Increased size according to wireframe
+        self.setMinimumSize(84, 84)
         self.setMaximumSize(84, 84)
         self.setAlignment(Qt.AlignCenter)
         self.setStyleSheet("""
@@ -22,13 +21,27 @@ class TilePreview(QLabel):
             }
         """)
         self.setText("No tile selected")
+        self.current_pixmap = None
+        self.render_mode = Qt.FastTransformation  # Inicializamos con Pixel Perfect por defecto
+
+    def setRenderMode(self, mode):
+        """Cambia el modo de renderizado y actualiza la preview si hay una imagen"""
+        self.render_mode = mode
+        if self.current_pixmap:
+            self.updateTile(self.current_pixmap)
 
     def setTile(self, pixmap):
+        """Establece un nuevo tile para mostrar"""
+        self.current_pixmap = pixmap
+        self.updateTile(pixmap)
+
+    def updateTile(self, pixmap):
+        """Actualiza la visualización del tile con el modo de renderizado actual"""
         if pixmap:
             scaled_pixmap = pixmap.scaled(
                 self.size(),
                 Qt.KeepAspectRatio,
-                Qt.SmoothTransformation
+                self.render_mode
             )
             self.setPixmap(scaled_pixmap)
         else:
@@ -36,8 +49,7 @@ class TilePreview(QLabel):
 
 
 class TilesetViewer(QLabel):
-    """Custom widget for displaying tileset with grid and selection"""
-    tileSelected = Signal(int, int)  # Emits row, col of selected tile
+    tileSelected = Signal(int, int)
 
     def __init__(self):
         super().__init__()
@@ -45,9 +57,17 @@ class TilesetViewer(QLabel):
         self.tile_height = 32
         self.tile_spacing = 0
         self.selected_tile = None
+        self.original_pixmap = None  # Inicializamos el atributo
         self.setMouseTracking(True)
         self.setAlignment(Qt.AlignCenter)
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.render_mode = Qt.FastTransformation  # Inicializamos con Pixel Perfect por defecto
+
+    def setRenderMode(self, mode):
+        self.render_mode = mode
+        if self.original_pixmap:
+            self.updatePixmap(self.original_pixmap)
+            self.updateGrid()
 
     def setTileSize(self, width, height, spacing):
         self.tile_width = width
@@ -62,8 +82,18 @@ class TilesetViewer(QLabel):
             self.drawGrid()
 
     def setPixmap(self, pixmap):
-        super().setPixmap(pixmap)
         if pixmap:
+            self.original_pixmap = pixmap
+            self.updatePixmap(pixmap)
+
+    def updatePixmap(self, pixmap):
+        if pixmap:
+            scaled_pixmap = pixmap.scaled(
+                pixmap.size(),
+                Qt.KeepAspectRatio,
+                self.render_mode
+            )
+            super().setPixmap(scaled_pixmap)
             self.adjustSize()
 
     def adjustSize(self):
@@ -85,6 +115,7 @@ class TilesetViewer(QLabel):
         if not self.pixmap():
             return
 
+        # Create a new pixmap with the grid
         grid_pixmap = QPixmap(self.pixmap())
         painter = QPainter(grid_pixmap)
         painter.setRenderHint(QPainter.Antialiasing, False)
@@ -140,6 +171,12 @@ class TilesetPanel(BasePanel):
         self.init_panel()
 
     def init_panel(self):
+        # Container for controls
+        controls_container = QWidget()
+        controls_layout = QHBoxLayout(controls_container)
+        controls_layout.setContentsMargins(0, 0, 0, 0)
+        controls_layout.setSpacing(5)
+
         # Load button with specific height and style
         load_button = QPushButton("Load Tileset")
         load_button.setMinimumHeight(30)
@@ -155,7 +192,47 @@ class TilesetPanel(BasePanel):
             }
         """)
         load_button.clicked.connect(self.load_tileset)
-        self.content_layout.addWidget(load_button)
+
+        # Render mode selector
+        self.render_mode_combo = QComboBox()
+        self.render_mode_combo.addItem("Smooth", Qt.SmoothTransformation)
+        self.render_mode_combo.addItem("Pixel Perfect", Qt.FastTransformation)
+        self.render_mode_combo.setCurrentIndex(1)  # Set Pixel Perfect as default
+        self.render_mode_combo.setFixedWidth(100)
+        self.render_mode_combo.setStyleSheet("""
+            QComboBox {
+                background-color: #252526;
+                border: 1px solid #454545;
+                border-radius: 3px;
+                color: #CCCCCC;
+                padding: 5px;
+                min-height: 30px;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 20px;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid #CCCCCC;
+                margin-right: 5px;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #252526;
+                border: 1px solid #454545;
+                color: #CCCCCC;
+                selection-background-color: #264F78;
+            }
+        """)
+        self.render_mode_combo.currentIndexChanged.connect(self.on_render_mode_changed)
+
+        # Add controls to layout
+        controls_layout.addWidget(load_button)
+        controls_layout.addWidget(self.render_mode_combo)
+
+        self.content_layout.addWidget(controls_container)
 
         # Container for tile preview
         preview_container = QWidget()
@@ -222,6 +299,11 @@ class TilesetPanel(BasePanel):
         # Add stretching space at the bottom
         self.content_layout.addStretch()
 
+    def on_render_mode_changed(self, index):
+        render_mode = self.render_mode_combo.currentData()
+        self.tileset_viewer.setRenderMode(render_mode)
+        self.tile_preview.setRenderMode(render_mode)
+
     def load_tileset(self):
         file_name, _ = QFileDialog.getOpenFileName(
             self,
@@ -248,6 +330,11 @@ class TilesetPanel(BasePanel):
                         self.settings_panel.tile_height_spin.value(),
                         self.settings_panel.tile_spacing_spin.value()
                     )
+
+                # Set initial render mode
+                render_mode = self.render_mode_combo.currentData()
+                self.tileset_viewer.setRenderMode(render_mode)
+                self.tile_preview.setRenderMode(render_mode)
 
                 self.tileset_viewer.setPixmap(pixmap)
                 self.tileset_viewer.updateGrid()
