@@ -1,71 +1,138 @@
-<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
     <!-- Main Window Background -->
-    <rect x="0" y="0" width="1000" height="700" fill="#1E1E1E" stroke="#1E1E1E" stroke-width="2"/>
+    <rect x="0" y="0" width="1200" height="800" fill="#1E1E1E"/>
 
     <!-- Top Menu Bar -->
-    <rect x="0" y="0" width="1000" height="30" fill="#2D2D2D" stroke="#2D2D2D"/>
+    <rect x="0" y="0" width="1200" height="30" fill="#2D2D2D"/>
     <text x="20" y="20" font-family="Arial" font-size="14" fill="#CCCCCC">File</text>
     <text x="70" y="20" font-family="Arial" font-size="14" fill="#CCCCCC">Edit</text>
     <text x="120" y="20" font-family="Arial" font-size="14" fill="#CCCCCC">View</text>
     <text x="170" y="20" font-family="Arial" font-size="14" fill="#CCCCCC">Help</text>
 
-    <!-- Left Panel - Tileset & Categories -->
-    <rect x="10" y="40" width="240" height="650" fill="#252526" stroke="#353535"/>
-    <rect x="10" y="40" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
-    <text x="20" y="60" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Tileset</text>
+    <!-- Left Panel - Tileset -->
+    <rect x="0" y="30" width="300" height="770" fill="#252526" stroke="#353535"/>
 
-    <!-- Tileset Preview Area -->
-    <rect x="20" y="80" width="220" height="220" fill="#1E1E1E" stroke="#454545" stroke-dasharray="4"/>
-    <text x="85" y="180" font-family="Arial" font-size="12" fill="#666666">Tileset Preview</text>
+    <!-- Tileset Header -->
+    <rect x="0" y="30" width="300" height="30" fill="#2D2D2D"/>
+    <text x="10" y="50" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Tileset</text>
 
-    <!-- Categories Section -->
-    <rect x="10" y="310" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
-    <text x="20" y="330" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Categories</text>
-    <rect x="20" y="350" width="220" height="330" fill="#1E1E1E" stroke="#454545"/>
+    <!-- Load Tileset Button -->
+    <rect x="10" y="70" width="280" height="30" rx="5" fill="#264F78"/>
+    <text x="150" y="90" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Load Tileset</text>
+
+    <!-- Selected Tile Preview -->
+    <rect x="10" y="110" width="280" height="100" fill="#1E1E1E" stroke="#454545"/>
+    <rect x="108" y="120" width="84" height="84" fill="#1E1E1E" stroke="#454545" stroke-dasharray="4"/>
+    <text x="150" y="165" font-family="Arial" font-size="12" fill="#666666" text-anchor="middle">No tile selected</text>
+
+    <!-- Tileset Viewer Area -->
+    <rect x="10" y="220" width="280" height="380" fill="#1E1E1E" stroke="#454545"/>
+    <!-- Example Grid -->
+    <g transform="translate(15, 225)">
+        <rect x="0" y="0" width="270" height="370" fill="#1E1E1E"/>
+        <!-- Grid lines (simplified) -->
+        <g stroke="#454545" stroke-width="1" stroke-dasharray="2,2">
+            <line x1="90" y1="0" x2="90" y2="370"/>
+            <line x1="180" y1="0" x2="180" y2="370"/>
+            <line x1="0" y1="90" x2="270" y2="90"/>
+            <line x1="0" y1="180" x2="270" y2="180"/>
+            <line x1="0" y1="270" x2="270" y2="270"/>
+        </g>
+    </g>
+
+    <!-- Workspaces Panel -->
+    <rect x="0" y="610" width="300" height="190" fill="#252526" stroke="#353535"/>
+    <rect x="0" y="610" width="300" height="30" fill="#2D2D2D"/>
+    <text x="10" y="630" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Workspaces</text>
+
+    <!-- Workspace List -->
+    <rect x="10" y="650" width="280" height="140" fill="#1E1E1E" stroke="#454545"/>
+    <!-- Example Workspace Items -->
+    <g>
+        <rect x="15" y="655" width="270" height="30" fill="#2D2D2D" rx="3"/>
+        <text x="25" y="675" font-family="Arial" font-size="12" fill="#CCCCCC">🗀 Dungeon Project</text>
+    </g>
+    <g>
+        <rect x="25" y="690" width="260" height="25" fill="#264F78" rx="3"/>
+        <text x="35" y="707" font-family="Arial" font-size="12" fill="#FFFFFF">└ Room: Main Hall</text>
+    </g>
+    <g>
+        <rect x="25" y="720" width="260" height="25" fill="#1E1E1E" rx="3"/>
+        <text x="35" y="737" font-family="Arial" font-size="12" fill="#CCCCCC">└ Room: Treasury</text>
+    </g>
+    <g>
+        <rect x="15" y="750" width="270" height="30" fill="#2D2D2D" rx="3"/>
+        <text x="25" y="770" font-family="Arial" font-size="12" fill="#CCCCCC">🗀 Castle Project</text>
+    </g>
 
     <!-- Center Panel - Room Preview -->
-    <rect x="260" y="40" width="480" height="650" fill="#252526" stroke="#353535"/>
-    <rect x="260" y="40" width="480" height="30" fill="#2D2D2D" stroke="#353535"/>
-    <text x="270" y="60" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Room Preview</text>
+    <rect x="300" y="30" width="600" height="770" fill="#252526" stroke="#353535"/>
+    <rect x="300" y="30" width="600" height="30" fill="#2D2D2D"/>
+    <text x="310" y="50" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Room Preview</text>
 
-    <!-- Room Preview Area -->
-    <rect x="270" y="80" width="460" height="600" fill="#1E1E1E" stroke="#454545" stroke-dasharray="4"/>
-    <text x="450" y="350" font-family="Arial" font-size="12" fill="#666666">Generated Room Preview</text>
+    <!-- Preview Area -->
+    <rect x="310" y="70" width="580" height="720" fill="#1E1E1E" stroke="#454545" stroke-dasharray="4"/>
+    <text x="600" y="400" font-family="Arial" font-size="14" fill="#666666" text-anchor="middle">Generated Room Preview</text>
 
-    <!-- Right Panel - Rules & Settings -->
-    <rect x="750" y="40" width="240" height="650" fill="#252526" stroke="#353535"/>
+    <!-- Right Panel - Settings -->
+    <rect x="900" y="30" width="300" height="770" fill="#252526" stroke="#353535"/>
 
-    <!-- Generation Settings -->
-    <rect x="750" y="40" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
-    <text x="760" y="60" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Generation Settings</text>
+    <!-- Generation Settings Header -->
+    <rect x="900" y="30" width="300" height="30" fill="#2D2D2D"/>
+    <text x="910" y="50" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Generation Settings</text>
 
-    <!-- Room Size Controls -->
-    <rect x="760" y="80" width="220" height="100" fill="#1E1E1E" stroke="#454545"/>
-    <text x="770" y="100" font-family="Arial" font-size="12" fill="#CCCCCC">Room Size</text>
+    <!-- Tile Settings Section -->
+    <rect x="910" y="70" width="280" height="120" fill="#1E1E1E" stroke="#454545"/>
+    <text x="920" y="90" font-family="Arial" font-size="12" fill="#CCCCCC" font-weight="bold">Tile Settings</text>
+    <!-- Tile Controls -->
+    <g>
+        <text x="920" y="115" font-family="Arial" font-size="12" fill="#CCCCCC">Tile Width:</text>
+        <rect x="1080" y="100" width="100" height="20" fill="#252526" stroke="#454545"/>
+        <text x="1090" y="115" font-family="Arial" font-size="12" fill="#CCCCCC">32</text>
+    </g>
+    <g>
+        <text x="920" y="145" font-family="Arial" font-size="12" fill="#CCCCCC">Tile Height:</text>
+        <rect x="1080" y="130" width="100" height="20" fill="#252526" stroke="#454545"/>
+        <text x="1090" y="145" font-family="Arial" font-size="12" fill="#CCCCCC">32</text>
+    </g>
+    <g>
+        <text x="920" y="175" font-family="Arial" font-size="12" fill="#CCCCCC">Tile Spacing:</text>
+        <rect x="1080" y="160" width="100" height="20" fill="#252526" stroke="#454545"/>
+        <text x="1090" y="175" font-family="Arial" font-size="12" fill="#CCCCCC">0</text>
+    </g>
 
-    <!-- Generation Rules -->
-    <rect x="750" y="190" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
-    <text x="760" y="210" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Rules</text>
-    <rect x="760" y="230" width="220" height="250" fill="#1E1E1E" stroke="#454545"/>
+    <!-- Room Size Settings -->
+    <rect x="910" y="200" width="280" height="100" fill="#1E1E1E" stroke="#454545"/>
+    <text x="920" y="220" font-family="Arial" font-size="12" fill="#CCCCCC" font-weight="bold">Room Size</text>
+    <!-- Size Controls -->
+    <g>
+        <text x="920" y="245" font-family="Arial" font-size="12" fill="#CCCCCC">Width:</text>
+        <rect x="1080" y="230" width="100" height="20" fill="#252526" stroke="#454545"/>
+        <text x="1090" y="245" font-family="Arial" font-size="12" fill="#CCCCCC">20</text>
+    </g>
+    <g>
+        <text x="920" y="275" font-family="Arial" font-size="12" fill="#CCCCCC">Height:</text>
+        <rect x="1080" y="260" width="100" height="20" fill="#252526" stroke="#454545"/>
+        <text x="1090" y="275" font-family="Arial" font-size="12" fill="#CCCCCC">15</text>
+    </g>
 
-    <!-- Generation Controls -->
-    <rect x="750" y="490" width="240" height="30" fill="#2D2D2D" stroke="#353535"/>
-    <text x="760" y="510" font-family="Arial" font-size="14" fill="#CCCCCC" font-weight="bold">Controls</text>
+    <!-- Rules Section -->
+    <rect x="910" y="310" width="280" height="270" fill="#1E1E1E" stroke="#454545"/>
+    <text x="920" y="330" font-family="Arial" font-size="12" fill="#CCCCCC" font-weight="bold">Rules</text>
 
-    <!-- Buttons -->
-    <rect x="760" y="530" width="220" height="150" fill="#1E1E1E" stroke="#454545"/>
+    <!-- Controls Section -->
+    <rect x="910" y="590" width="280" height="200" fill="#1E1E1E" stroke="#454545"/>
+    <text x="920" y="610" font-family="Arial" font-size="12" fill="#CCCCCC" font-weight="bold">Controls</text>
 
-    <!-- Modern Buttons with Hover Effect -->
-    <rect x="770" y="540" width="200" height="30" fill="#2C7A3D" rx="5"/>
-    <text x="845" y="560" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Generate</text>
+    <!-- Generate Button -->
+    <rect x="920" y="630" width="260" height="40" rx="5" fill="#2C7A3D"/>
+    <text x="1050" y="655" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Generate</text>
 
-    <rect x="770" y="580" width="200" height="30" fill="#264F78" rx="5"/>
-    <text x="845" y="600" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Save Configuration</text>
+    <!-- Save Configuration Button -->
+    <rect x="920" y="680" width="260" height="30" rx="5" fill="#264F78"/>
+    <text x="1050" y="700" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Save Configuration</text>
 
-    <rect x="770" y="620" width="200" height="30" fill="#264F78" rx="5"/>
-    <text x="845" y="640" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Load Configuration</text>
-
-    <!-- Panel Borders to create subtle separation -->
-    <line x1="250" y1="30" x2="250" y2="700" stroke="#353535" stroke-width="1"/>
-    <line x1="740" y1="30" x2="740" y2="700" stroke="#353535" stroke-width="1"/>
+    <!-- Load Configuration Button -->
+    <rect x="920" y="720" width="260" height="30" rx="5" fill="#264F78"/>
+    <text x="1050" y="740" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">Load Configuration</text>
 </svg>

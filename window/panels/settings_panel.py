@@ -9,6 +9,10 @@ class SettingsPanel(BasePanel):
         self.init_panel()
 
     def init_panel(self):
+        # Tile settings Controls
+        tile_settings_group = self.create_tile_settings()
+        self.content_layout.addWidget(tile_settings_group)
+
         # Room Size Controls
         size_group = self.create_size_controls()
         self.content_layout.addWidget(size_group)
@@ -153,4 +157,85 @@ class SettingsPanel(BasePanel):
         layout.addWidget(load_btn)
 
         group.setLayout(layout)
+        return group
+
+    def create_tile_settings(self):
+        group = QGroupBox("Tile Settings")
+        group.setStyleSheet("""
+                    QGroupBox {
+                border: 1px solid #454545;
+                border-radius: 5px;
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+            QGroupBox::title {
+                color: #CCCCCC;
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                left: 10px;
+            }
+        """)
+
+        layout = QVBoxLayout()
+
+        tile_width_layout = QHBoxLayout()
+        tile_width_label = QLabel("Tile Width:")
+        tile_width_label.setStyleSheet("color: #CCCCCC;")
+        self.tile_width_spin = QSpinBox()
+        self.tile_width_spin.setRange(8, 128)
+        self.tile_width_spin.setValue(32)
+        self.tile_width_spin.setStyleSheet("""
+            QSpinBox {
+                background-color: #1E1E1E;
+                color: #CCCCCC;
+                border: 1px solid #454545;
+                padding: 2px;
+            }
+        """)
+
+        tile_width_layout.addWidget(tile_width_label)
+        tile_width_layout.addWidget(self.tile_width_spin)
+
+        # Tile Height
+        tile_height_layout = QHBoxLayout()
+        tile_height_label = QLabel("Tile Height:")
+        tile_height_label.setStyleSheet("color: #CCCCCC;")
+        self.tile_height_spin = QSpinBox()
+        self.tile_height_spin.setRange(8, 128)
+        self.tile_height_spin.setValue(32)
+        self.tile_height_spin.setStyleSheet("""
+            QSpinBox {
+                background-color: #1E1E1E;
+                color: #CCCCCC;
+                border: 1px solid #454545;
+                padding: 2px;
+            }
+        """)
+
+        tile_height_layout.addWidget(tile_height_label)
+        tile_height_layout.addWidget(self.tile_height_spin)
+
+        # Tile Spacing
+        tile_spacing_layout = QHBoxLayout()
+        tile_spacing_label = QLabel("Tile Spacing:")
+        tile_spacing_label.setStyleSheet("color: #CCCCCC;")
+        self.tile_spacing_spin = QSpinBox()
+        self.tile_spacing_spin.setRange(0, 16)
+        self.tile_spacing_spin.setValue(0)
+        self.tile_spacing_spin.setStyleSheet("""
+            QSpinBox {
+                background-color: #1E1E1E;
+                color: #CCCCCC;
+                border: 1px solid #454545;
+                padding: 2px;
+            }
+        """)
+        tile_spacing_layout.addWidget(tile_spacing_label)
+        tile_spacing_layout.addWidget(self.tile_spacing_spin)
+
+        layout.addLayout(tile_width_layout)
+        layout.addLayout(tile_height_layout)
+        layout.addLayout(tile_spacing_layout)
+        group.setLayout(layout)
+
         return group
