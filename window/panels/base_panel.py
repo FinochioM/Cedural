@@ -11,6 +11,7 @@ class BasePanel(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
+        # Header
         header = QWidget()
         header.setFixedHeight(30)
         header.setStyleSheet("background-color: #2D2D2D;")
@@ -23,8 +24,11 @@ class BasePanel(QWidget):
 
         layout.addWidget(header)
 
+        # Content
         self.content = QWidget()
         self.content.setStyleSheet("background-color: #252526;")
         self.content_layout = QVBoxLayout(self.content)
-        self.content_layout.setContentsMargins(10, 10, 10, 10)
+        # Removemos el margen inferior del content_layout
+        self.content_layout.setContentsMargins(10, 10, 10, 0)
+        self.content_layout.setAlignment(Qt.AlignTop)
         layout.addWidget(self.content)

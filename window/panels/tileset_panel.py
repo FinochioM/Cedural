@@ -177,7 +177,7 @@ class TilesetPanel(BasePanel):
         controls_layout.setContentsMargins(0, 0, 0, 0)
         controls_layout.setSpacing(5)
 
-        # Load button with specific height and style
+        # Load button
         load_button = QPushButton("Load Tileset")
         load_button.setMinimumHeight(30)
         load_button.setStyleSheet("""
@@ -197,44 +197,18 @@ class TilesetPanel(BasePanel):
         self.render_mode_combo = QComboBox()
         self.render_mode_combo.addItem("Smooth", Qt.SmoothTransformation)
         self.render_mode_combo.addItem("Pixel Perfect", Qt.FastTransformation)
-        self.render_mode_combo.setCurrentIndex(1)  # Set Pixel Perfect as default
+        self.render_mode_combo.setCurrentIndex(1)
         self.render_mode_combo.setFixedWidth(100)
-        self.render_mode_combo.setStyleSheet("""
-            QComboBox {
-                background-color: #252526;
-                border: 1px solid #454545;
-                border-radius: 3px;
-                color: #CCCCCC;
-                padding: 5px;
-                min-height: 30px;
-            }
-            QComboBox::drop-down {
-                border: none;
-                width: 20px;
-            }
-            QComboBox::down-arrow {
-                image: none;
-                border-left: 5px solid transparent;
-                border-right: 5px solid transparent;
-                border-top: 5px solid #CCCCCC;
-                margin-right: 5px;
-            }
-            QComboBox QAbstractItemView {
-                background-color: #252526;
-                border: 1px solid #454545;
-                color: #CCCCCC;
-                selection-background-color: #264F78;
-            }
-        """)
         self.render_mode_combo.currentIndexChanged.connect(self.on_render_mode_changed)
 
-        # Add controls to layout
         controls_layout.addWidget(load_button)
         controls_layout.addWidget(self.render_mode_combo)
 
+        # Add controls to main layout with no margins
         self.content_layout.addWidget(controls_container)
+        self.content_layout.setSpacing(0)
 
-        # Container for tile preview
+        # Container for tile preview with exact height
         preview_container = QWidget()
         preview_container.setFixedHeight(100)
         preview_container.setStyleSheet("""
@@ -246,7 +220,6 @@ class TilesetPanel(BasePanel):
         preview_layout.setSpacing(0)
         preview_layout.setAlignment(Qt.AlignCenter)
 
-        # Selected tile preview
         self.tile_preview = TilePreview()
         preview_layout.addWidget(self.tile_preview, alignment=Qt.AlignCenter)
         self.content_layout.addWidget(preview_container)
@@ -261,7 +234,6 @@ class TilesetPanel(BasePanel):
         viewer_layout.setContentsMargins(5, 5, 5, 5)
         viewer_layout.setSpacing(0)
 
-        # Scroll area for tileset
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -281,23 +253,27 @@ class TilesetPanel(BasePanel):
             }
         """)
 
-        # Centering container for the tileset viewer
         center_container = QWidget()
         center_layout = QHBoxLayout(center_container)
         center_layout.setContentsMargins(0, 0, 0, 0)
         center_layout.setAlignment(Qt.AlignCenter)
 
-        # Tileset viewer widget
         self.tileset_viewer = TilesetViewer()
         self.tileset_viewer.tileSelected.connect(self.on_tile_selected)
         center_layout.addWidget(self.tileset_viewer)
 
         scroll_area.setWidget(center_container)
         viewer_layout.addWidget(scroll_area)
+
+        # Add viewer to main layout
         self.content_layout.addWidget(viewer_container)
 
-        # Add stretching space at the bottom
-        self.content_layout.addStretch()
+        # Remove any remaining stretch to ensure panels are adjacent
+        if self.content_layout.count() > 0 and self.content_layout.itemAt(self.content_layout.count() - 1).spacerItem():
+            self.content_layout.takeAt(self.content_layout.count() - 1)
+
+        # Establecer márgenes del content_layout
+        self.content_layout.setContentsMargins(10, 10, 10, 0)  # Removido el margen inferior
 
     def on_render_mode_changed(self, index):
         render_mode = self.render_mode_combo.currentData()
