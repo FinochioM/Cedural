@@ -1,13 +1,16 @@
-# Roadmap
 
-## beta 0.1
+
+# Roadmap
+## Here I will add the current state and next steps of the program.
+
+### beta 0.1
 
 - Simple GUI with all the elements laid out.
 - Button for Tileset loading.
 - Render mode dropdown (Smooth/Pixel Perfect)
 - Grid and Tile Preview with selection logic.
 
-## W.I.P
+### W.I.P
 
 - Rules logic, specific to each tileset.
 - Room generation.
