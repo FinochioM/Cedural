@@ -1,10 +1,15 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QPushButton, QDialogButtonBox,
                                QFileDialog, QMessageBox, QWidget, QHBoxLayout,
-                               QLabel, QSplitter, QTreeWidget, QTreeWidgetItem)
+                               QLabel, QSplitter, QTreeWidget, QTreeWidgetItem, QInputDialog)
 from PySide6.QtCore import Qt
 import json
 import os
+
+from rules_specific.editor_dialog import JsonEditorDialog
 from managers.rule_definition import RulesCatalog
+from rules_specific.rule_preview import RulePreviewWidget
+from rules_specific.rule_template_manager import RuleTemplateManager
+from rules_specific.rule_validator import RuleValidator
 
 
 class RuleTreeWidget(QTreeWidget):
@@ -72,6 +77,7 @@ class CategoryRulesDialog(QDialog):
         self.category_name = category_name
         self.category_manager = category_manager
         self.rules_dir = "rules"  # Directorio donde se guardan los archivos JSON
+        self.template_manager = RuleTemplateManager()
         self.init_ui()
         self.ensure_rules_directory()
         self.load_rule_files()
@@ -79,50 +85,33 @@ class CategoryRulesDialog(QDialog):
     def init_ui(self):
         self.setWindowTitle(f"Rules for {self.category_name}")
         self.setModal(True)
-        self.resize(800, 500)
+        self.resize(1000, 600)  # Aumentamos el tamaño para acomodar la previsualización
 
         # Main layout
-        layout = QVBoxLayout(self)
+        main_layout = QVBoxLayout(self)
 
-        # Crear un splitter horizontal
-        splitter = QSplitter(Qt.Horizontal)
+        # Horizontal splitter for main content
+        main_splitter = QSplitter(Qt.Horizontal)
 
-        # Panel izquierdo - Vista de archivos y reglas
+        # Left panel (tree and buttons)
         left_panel = QWidget()
         left_layout = QVBoxLayout(left_panel)
 
-        # Título
+        # Tree widget for rules
         rules_title = QLabel("Rule Files")
-        rules_title.setStyleSheet("""
-            QLabel {
-                color: #CCCCCC;
-                font-size: 14px;
-                font-weight: bold;
-                padding: 5px;
-            }
-        """)
+        rules_title.setStyleSheet("color: #CCCCCC; font-weight: bold;")
         left_layout.addWidget(rules_title)
 
-        # Tree widget para mostrar archivos y su contenido
         self.rules_tree = RuleTreeWidget()
+        self.rules_tree.setHeaderLabels(["Rules"])
+        self.rules_tree.itemSelectionChanged.connect(self.on_rule_selected)
         left_layout.addWidget(self.rules_tree)
 
-        # Panel derecho - Botones de acción
-        right_panel = QWidget()
-        right_layout = QVBoxLayout(right_panel)
+        # Buttons panel
+        buttons_panel = QWidget()
+        buttons_layout = QVBoxLayout(buttons_panel)
 
-        actions_title = QLabel("Actions")
-        actions_title.setStyleSheet("""
-            QLabel {
-                color: #CCCCCC;
-                font-size: 14px;
-                font-weight: bold;
-                padding: 5px;
-            }
-        """)
-        right_layout.addWidget(actions_title)
-
-        # Botones
+        # Action buttons
         button_style = """
             QPushButton {
                 background-color: #264F78;
@@ -139,56 +128,68 @@ class CategoryRulesDialog(QDialog):
             }
         """
 
-        create_button = QPushButton("Create New Rule File")
-        edit_button = QPushButton("Edit Rule File")
-        delete_button = QPushButton("Delete Rule File")
+        create_button = QPushButton("Create New Rule")
+        edit_button = QPushButton("Edit Rule")
+        save_template_button = QPushButton("Save as Template")
+        load_template_button = QPushButton("Load Template")
+        delete_button = QPushButton("Delete Rule")
 
-        create_button.setStyleSheet(button_style)
-        edit_button.setStyleSheet(button_style)
-        delete_button.setStyleSheet(button_style)
+        for button in [create_button, edit_button, save_template_button,
+                       load_template_button, delete_button]:
+            button.setStyleSheet(button_style)
 
         create_button.clicked.connect(self.create_new_rule)
         edit_button.clicked.connect(self.edit_rule)
+        save_template_button.clicked.connect(self.save_as_template)
+        load_template_button.clicked.connect(self.load_from_template)
         delete_button.clicked.connect(self.delete_rule)
 
-        right_layout.addWidget(create_button)
-        right_layout.addWidget(edit_button)
-        right_layout.addWidget(delete_button)
-        right_layout.addStretch()
+        buttons_layout.addWidget(create_button)
+        buttons_layout.addWidget(edit_button)
+        buttons_layout.addWidget(save_template_button)
+        buttons_layout.addWidget(load_template_button)
+        buttons_layout.addWidget(delete_button)
+        buttons_layout.addStretch()
 
-        # Agregar paneles al splitter
-        splitter.addWidget(left_panel)
-        splitter.addWidget(right_panel)
-        splitter.setSizes([550, 250])
+        left_layout.addWidget(buttons_panel)
 
-        # Agregar splitter al layout principal
-        layout.addWidget(splitter)
+        # Right panel (preview)
+        right_panel = QWidget()
+        right_layout = QVBoxLayout(right_panel)
 
-        # Botones del diálogo
+        preview_title = QLabel("Rule Preview")
+        preview_title.setStyleSheet("color: #CCCCCC; font-weight: bold;")
+        right_layout.addWidget(preview_title)
+
+        self.preview_widget = RulePreviewWidget()
+        right_layout.addWidget(self.preview_widget)
+
+        # Add panels to splitter
+        main_splitter.addWidget(left_panel)
+        main_splitter.addWidget(right_panel)
+        main_splitter.setSizes([400, 600])
+
+        # Add splitter to main layout
+        main_layout.addWidget(main_splitter)
+
+        # Dialog buttons
         button_box = QDialogButtonBox(QDialogButtonBox.Close)
         button_box.rejected.connect(self.reject)
-        layout.addWidget(button_box)
-
-        self.setStyleSheet("""
-            QDialog {
-                background-color: #252526;
-            }
-            QSplitter::handle {
-                background-color: #353535;
-                width: 2px;
-            }
-        """)
+        main_layout.addWidget(button_box)
 
     def ensure_rules_directory(self):
         """Asegura que existe el directorio para las reglas"""
-        os.makedirs(self.rules_dir, exist_ok=True)
+        # Obtener la ruta absoluta
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.rules_dir = os.path.join(current_dir, "rules")
 
+        os.makedirs(self.rules_dir, exist_ok=True)
     def load_rule_files(self):
         """Carga todos los archivos JSON de reglas para esta categoría"""
         self.rules_tree.clear()
 
-        if not os.path.exists(self.rules_dir):
-            return
+        # Mostrar todos los archivos en el directorio
+        all_files = os.listdir(self.rules_dir)
 
         # Filtrar por prefijo de categoría
         rule_files = [f for f in os.listdir(self.rules_dir)
@@ -205,6 +206,7 @@ class CategoryRulesDialog(QDialog):
 
     def create_new_rule(self):
         """Crea un nuevo archivo JSON con el template de reglas"""
+
         # Generar un nombre único para el archivo
         base_name = f"{self.category_name}_rule"
         counter = 1
@@ -235,10 +237,24 @@ class CategoryRulesDialog(QDialog):
             try:
                 with open(file_path, 'w') as f:
                     json.dump(template, f, indent=2)
-                self.load_rule_files()  # Recargar los archivos
+
+                self.load_rule_files()
+
+                self.select_file_in_tree(file_path)
+
                 QMessageBox.information(self, "Success", "Rule file created successfully!")
             except Exception as e:
+                print(f"Error creating file: {str(e)}")
                 QMessageBox.critical(self, "Error", f"Failed to create rule file: {str(e)}")
+
+    def select_file_in_tree(self, file_path):
+        """Busca y selecciona un archivo específico en el árbol"""
+        root = self.rules_tree.invisibleRootItem()
+        for i in range(root.childCount()):
+            item = root.child(i)
+            if item.data(0, Qt.UserRole) == file_path:
+                self.rules_tree.setCurrentItem(item)
+                break
 
     def edit_rule(self):
         """Edita el archivo JSON seleccionado"""
@@ -257,29 +273,28 @@ class CategoryRulesDialog(QDialog):
 
         try:
             with open(file_path, 'r') as f:
-                rule_data = json.load(f)
+                json_data = json.load(f)
 
-            if RulesCatalog.validate_rule(rule_data):
-                # Aquí iría la lógica para editar el archivo
-                # Por ahora solo mostramos un mensaje
-                QMessageBox.information(
-                    self,
-                    "Edit Rule",
-                    f"Editing file: {os.path.basename(file_path)}\n"
-                    "Editor functionality coming soon..."
-                )
-            else:
-                QMessageBox.warning(
-                    self,
-                    "Invalid Rule",
-                    "The rule file does not follow the required structure."
-                )
+            if self.validate_rule(json_data):
+                # Abrir el editor
+                editor = JsonEditorDialog(json_data, self)
+                if editor.exec() == QDialog.Accepted:
+                    edited_data = editor.get_json()
+                    if edited_data:
+                        # Validar el JSON editado
+                        if self.validate_rule(edited_data):
+                            # Guardar cambios
+                            with open(file_path, 'w') as f:
+                                json.dump(edited_data, f, indent=2)
+                            self.load_rule_files()  # Recargar archivos
+                            self.select_file_in_tree(file_path)  # Re-seleccionar el archivo
+                            QMessageBox.information(self, "Success", "Rule file saved successfully!")
+                        else:
+                            QMessageBox.warning(self, "Invalid Rule",
+                                             "The edited rule does not follow the required structure.")
         except Exception as e:
-            QMessageBox.critical(
-                self,
-                "Error",
-                f"Failed to load rule file: {str(e)}"
-            )
+            QMessageBox.critical(self, "Error", f"Failed to edit rule file: {str(e)}")
+
 
     def delete_rule(self):
         """Elimina el archivo JSON seleccionado"""
@@ -311,3 +326,85 @@ class CategoryRulesDialog(QDialog):
                 QMessageBox.information(self, "Success", "Rule file deleted successfully!")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Failed to delete rule file: {str(e)}")
+
+    def on_rule_selected(self):
+        """Actualiza la previsualización cuando se selecciona una regla"""
+        current_item = self.rules_tree.currentItem()
+        if current_item:
+            # Obtener el archivo raíz si se seleccionó un subelemento
+            while current_item.parent():
+                current_item = current_item.parent()
+
+            file_path = current_item.data(0, Qt.UserRole)
+            if file_path:
+                try:
+                    with open(file_path, 'r') as f:
+                        rule_data = json.load(f)
+                        self.preview_widget.update_preview(rule_data, [])  # Actualizar preview
+                except Exception as e:
+                    print(f"Error loading rule for preview: {str(e)}")
+
+    def validate_rule(self, rule_data):
+        """Valida una regla usando RuleValidator"""
+        validation_results = RuleValidator.validate_rule_structure(rule_data)
+
+        if not validation_results["is_valid"]:
+            error_msg = "\n".join(validation_results["errors"])
+            QMessageBox.warning(self, "Invalid Rule", f"Validation errors:\n{error_msg}")
+
+        if validation_results["warnings"]:
+            warning_msg = "\n".join(validation_results["warnings"])
+            QMessageBox.warning(self, "Rule Warnings", f"Warnings:\n{warning_msg}")
+
+        return validation_results["is_valid"]
+
+    def save_as_template(self):
+        """Guarda la regla actual como template"""
+        current_item = self.rules_tree.currentItem()
+        if not current_item:
+            QMessageBox.warning(self, "Warning", "Please select a rule to save as template")
+            return
+
+        # Obtener el archivo raíz
+        while current_item.parent():
+            current_item = current_item.parent()
+
+        file_path = current_item.data(0, Qt.UserRole)
+        if not file_path:
+            return
+
+        template_name, ok = QInputDialog.getText(
+            self, "Save Template", "Enter template name:"
+        )
+
+        if ok and template_name:
+            try:
+                with open(file_path, 'r') as f:
+                    rule_data = json.load(f)
+
+                if self.template_manager.save_as_template(rule_data, template_name):
+                    QMessageBox.information(
+                        self, "Success", "Template saved successfully!"
+                    )
+            except Exception as e:
+                QMessageBox.critical(
+                    self, "Error", f"Failed to save template: {str(e)}"
+                )
+
+    def load_from_template(self):
+        """Carga una regla desde un template"""
+        templates = self.template_manager.get_available_templates()
+        if not templates:
+            QMessageBox.information(
+                self, "Templates", "No templates available"
+            )
+            return
+
+        template_name, ok = QInputDialog.getItem(
+            self, "Load Template", "Select template:", templates, 0, False
+        )
+
+        if ok and template_name:
+            rule_data = self.template_manager.load_template(template_name)
+            if rule_data:
+                self.create_new_rule(template_data=rule_data)

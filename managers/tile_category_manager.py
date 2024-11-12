@@ -6,6 +6,9 @@ from PySide6.QtCore import Signal, Qt
 from managers.categories_rule_dialog import CategoryRulesDialog
 import os
 
+from rules_specific.rule_template_manager import RuleTemplateManager
+
+
 class TileCategoryManager(QWidget):
     categoryChanged = Signal(dict)  # Emits when categories are modified
 
@@ -14,6 +17,7 @@ class TileCategoryManager(QWidget):
         self.categories = {}  # Format: {category_name: set(tile_indices)}
         self.selected_tile_indices = []  # Store currently selected tiles
         self.rules_dir = "rules"
+        self.template_manager = RuleTemplateManager()
         self.init_ui()
 
     def init_ui(self):
