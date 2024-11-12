@@ -1,5 +1,8 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton,
                                QSpinBox, QGroupBox, QHBoxLayout)
+
+from managers.category_rules_editor import CategoryRulesEditor
+from managers.tile_category_manager import TileCategoryManager
 from .base_panel import BasePanel
 
 
@@ -17,7 +20,7 @@ class SettingsPanel(BasePanel):
         size_group = self.create_size_controls()
         self.content_layout.addWidget(size_group)
 
-        # Rules Section
+        # Rules Section with Category Manager
         rules_group = self.create_rules_section()
         self.content_layout.addWidget(rules_group)
 
@@ -108,14 +111,9 @@ class SettingsPanel(BasePanel):
 
         layout = QVBoxLayout()
 
-        # Placeholder para futuras reglas
-        placeholder = QWidget()
-        placeholder.setStyleSheet("""
-            background-color: #1E1E1E;
-            border: 1px dashed #454545;
-        """)
-        placeholder.setMinimumHeight(200)
-        layout.addWidget(placeholder)
+        # Add only the category manager
+        self.category_manager = TileCategoryManager()
+        layout.addWidget(self.category_manager)
 
         group.setLayout(layout)
         return group
@@ -239,3 +237,13 @@ class SettingsPanel(BasePanel):
         group.setLayout(layout)
 
         return group
+
+    def on_categories_changed(self, categories_dict):
+        """Update rules editor when categories change"""
+        self.rules_editor.update_category_list(categories_dict.keys())
+
+    def on_category_selected(self, current, previous):
+        """Load rules for the selected category"""
+        if current:
+            category_name = current.text().split(" [")[0]
+            self.rules_editor.load_category_rules(category_name)

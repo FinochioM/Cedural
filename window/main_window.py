@@ -67,6 +67,7 @@ class MainWindow(QMainWindow):
         self.settings_panel.tile_width_spin.valueChanged.connect(self.update_tileset_grid)
         self.settings_panel.tile_height_spin.valueChanged.connect(self.update_tileset_grid)
         self.settings_panel.tile_spacing_spin.valueChanged.connect(self.update_tileset_grid)
+        self.tileset_panel.tilesSelected.connect(self.settings_panel.category_manager.set_selected_tiles)
 
         # Add to main splitter
         main_splitter.addWidget(left_container)

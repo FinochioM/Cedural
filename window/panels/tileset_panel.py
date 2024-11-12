@@ -6,7 +6,6 @@ from PIL import Image
 import io
 from .base_panel import BasePanel
 
-
 class TilePreview(QLabel):
     """Widget to display the currently selected tile"""
     def __init__(self):
@@ -50,6 +49,7 @@ class TilePreview(QLabel):
 
 class TilesetViewer(QLabel):
     tileSelected = Signal(int, int)
+    tilesChanged = Signal(list) # Multiple tile selection
 
     def __init__(self):
         super().__init__()
@@ -62,6 +62,7 @@ class TilesetViewer(QLabel):
         self.setAlignment(Qt.AlignCenter)
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.render_mode = Qt.FastTransformation  # Inicializamos con Pixel Perfect por defecto
+        self.selected_tiles = []
 
     def setRenderMode(self, mode):
         self.render_mode = mode
@@ -158,12 +159,26 @@ class TilesetViewer(QLabel):
         max_row = (self.pixmap().height() // (self.tile_height + self.tile_spacing)) - 1
 
         if 0 <= col <= max_col and 0 <= row <= max_row:
-            self.selected_tile = (row, col)
+            tile_index = row * (max_col + 1) + col
+            if event.modifiers() & Qt.ControlModifier:
+                # Toggle selection with Ctrl key
+                if tile_index in self.selected_tiles:
+                    self.selected_tiles.remove(tile_index)
+                else:
+                    self.selected_tiles.append(tile_index)
+            else:
+                # Single selection without Ctrl key
+                self.selected_tiles = [tile_index]
+
+            self.selected_tile = (row, col)  # For single tile preview
             self.drawGrid()
             self.tileSelected.emit(row, col)
+            self.tilesChanged.emit(self.selected_tiles)
 
 
 class TilesetPanel(BasePanel):
+    tilesSelected = Signal(list)
+
     def __init__(self, settings_panel=None):
         super().__init__("Tileset")
         self.settings_panel = settings_panel
@@ -184,8 +199,9 @@ class TilesetPanel(BasePanel):
             QPushButton {
                 background-color: #264F78;
                 border: none;
-                border-radius: 5px;
+                border-radius: 2px;
                 color: white;
+                margin-bottom: 5px;
             }
             QPushButton:hover {
                 background-color: #365F88;
@@ -260,6 +276,7 @@ class TilesetPanel(BasePanel):
 
         self.tileset_viewer = TilesetViewer()
         self.tileset_viewer.tileSelected.connect(self.on_tile_selected)
+        self.tileset_viewer.tilesChanged.connect(self.on_tiles_changed)
         center_layout.addWidget(self.tileset_viewer)
 
         scroll_area.setWidget(center_container)
@@ -279,6 +296,10 @@ class TilesetPanel(BasePanel):
         render_mode = self.render_mode_combo.currentData()
         self.tileset_viewer.setRenderMode(render_mode)
         self.tile_preview.setRenderMode(render_mode)
+
+    def on_tiles_changed(self, tile_indices):
+        """Forward the selected tiles to any listeners"""
+        self.tilesSelected.emit(tile_indices)
 
     def load_tileset(self):
         file_name, _ = QFileDialog.getOpenFileName(
