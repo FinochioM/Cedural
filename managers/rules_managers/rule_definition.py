@@ -109,7 +109,7 @@ class RulesCatalog:
                     "borderSides": ["top", "bottom", "left", "right"],
                     "borderWidth": 1
                 },
-                description="Define border-specific rules"
+                description="Define border-specific rules_managers"
             )
         }
 
@@ -119,11 +119,11 @@ class RulesCatalog:
         template = {
             "type": "rule",
             "category": "",
-            "rules": {}
+            "rules_managers": {}
         }
 
         for rule_def in RulesCatalog.get_all_rules().values():
-            template["rules"][rule_def.type.value] = rule_def.template
+            template["rules_managers"][rule_def.type.value] = rule_def.template
 
         return template
 

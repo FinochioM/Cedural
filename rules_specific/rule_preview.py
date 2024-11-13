@@ -115,8 +115,8 @@ class RulePreviewWidget(QWidget):
 
         self.grid.clear_preview()
 
-        if "rules" in rule_data:
-            rules = rule_data["rules"]
+        if "rules_managers" in rule_data:
+            rules = rule_data["rules_managers"]
             description_parts = []
 
             for rule_type, content in rules.items():

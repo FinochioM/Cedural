@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QPushButton, QLineEdit, QListWidget, QListWidgetItem,
                              QInputDialog, QMessageBox)
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Signal
 
-from managers.categories_rule_dialog import CategoryRulesDialog
+from managers.rules_managers.categories_rule_dialog import CategoryRulesDialog
 import os
 
 from rules_specific.rule_template_manager import RuleTemplateManager
@@ -16,7 +16,7 @@ class TileCategoryManager(QWidget):
         super().__init__()
         self.categories = {}  # Format: {category_name: set(tile_indices)}
         self.selected_tile_indices = []  # Store currently selected tiles
-        self.rules_dir = "rules"
+        self.rules_dir = ""
         self.template_manager = RuleTemplateManager()
         self.init_ui()
 

@@ -1,12 +1,11 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QPushButton, QDialogButtonBox,
-                               QFileDialog, QMessageBox, QWidget, QHBoxLayout,
-                               QLabel, QSplitter, QTreeWidget, QTreeWidgetItem, QInputDialog)
+                               QFileDialog, QMessageBox, QWidget, QLabel, QSplitter, QTreeWidget, QTreeWidgetItem, QInputDialog)
 from PySide6.QtCore import Qt
 import json
 import os
 
 from rules_specific.editor_dialog import JsonEditorDialog
-from managers.rule_definition import RulesCatalog
+from managers.rules_managers.rule_definition import RulesCatalog
 from rules_specific.rule_preview import RulePreviewWidget
 from rules_specific.rule_template_manager import RuleTemplateManager
 from rules_specific.rule_validator import RuleValidator
@@ -76,7 +75,7 @@ class CategoryRulesDialog(QDialog):
         super().__init__(parent)
         self.category_name = category_name
         self.category_manager = category_manager
-        self.rules_dir = "rules"  # Directorio donde se guardan los archivos JSON
+        self.rules_dir = ""  # Directorio donde se guardan los archivos JSON
         self.template_manager = RuleTemplateManager()
         self.init_ui()
         self.ensure_rules_directory()
@@ -97,7 +96,7 @@ class CategoryRulesDialog(QDialog):
         left_panel = QWidget()
         left_layout = QVBoxLayout(left_panel)
 
-        # Tree widget for rules
+        # Tree widget for rules_managers
         rules_title = QLabel("Rule Files")
         rules_title.setStyleSheet("color: #CCCCCC; font-weight: bold;")
         left_layout.addWidget(rules_title)
@@ -181,7 +180,7 @@ class CategoryRulesDialog(QDialog):
         """Asegura que existe el directorio para las reglas"""
         # Obtener la ruta absoluta
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.rules_dir = os.path.join(current_dir, "rules")
+        self.rules_dir = os.path.join(current_dir, "rules_managers")
 
         os.makedirs(self.rules_dir, exist_ok=True)
     def load_rule_files(self):

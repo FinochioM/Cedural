@@ -1,8 +1,7 @@
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton,
+from PySide6.QtWidgets import (QVBoxLayout, QLabel, QPushButton,
                                QSpinBox, QGroupBox, QHBoxLayout)
 
-from managers.category_rules_editor import CategoryRulesEditor
-from managers.tile_category_manager import TileCategoryManager
+from managers.rules_managers.tile_category_manager import TileCategoryManager
 from .base_panel import BasePanel
 
 
@@ -239,11 +238,34 @@ class SettingsPanel(BasePanel):
         return group
 
     def on_categories_changed(self, categories_dict):
-        """Update rules editor when categories change"""
+        """Update rules_managers editor when categories change"""
         self.rules_editor.update_category_list(categories_dict.keys())
 
     def on_category_selected(self, current, previous):
-        """Load rules for the selected category"""
+        """Load rules_managers for the selected category"""
         if current:
             category_name = current.text().split(" [")[0]
             self.rules_editor.load_category_rules(category_name)
+    def update_tile_selection(self, selected_tiles):
+        """Actualiza la selección de tiles en el category manager"""
+        if hasattr(self, 'category_manager'):
+            self.category_manager.set_selected_tiles(selected_tiles)
+
+    def update_for_project_type(self, project_type):
+        """Actualiza la UI según el tipo de proyecto"""
+        # Actualizar configuraciones específicas del tipo de proyecto
+        pass
+
+    def update_grid_settings(self, grid_settings):
+        """Actualiza configuraciones de grid"""
+        if hasattr(self, 'tile_width_spin'):
+            self.tile_width_spin.setValue(grid_settings.width)
+            self.tile_height_spin.setValue(grid_settings.height)
+
+    def update_for_workspace(self, workspace):
+        """Actualiza configuraciones según el workspace"""
+        pass
+
+    def load_room_settings(self, room):
+        """Carga configuraciones de una room"""
+        pass

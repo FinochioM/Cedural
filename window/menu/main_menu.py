@@ -10,22 +10,27 @@ class MainMenu(QMenuBar):
         # File Menu
         file_menu = QMenu("&File", self)
 
-        new_action = QAction("New Project", self)
-        open_action = QAction("Open Project", self)
-        save_action = QAction("Save Project", self)
-        save_as_action = QAction("Save Project As...", self)
-        export_action = QAction("Export Room...", self)
+        self.new_project_action = QAction("New Project", self)
+        self.open_project_action = QAction("Open Project", self)
+        self.save_project_action = QAction("Save Project", self)
+        self.save_as_action = QAction("Save Project As...", self)
+        self.export_action = QAction("Export Room...", self)
         exit_action = QAction("Exit", self)
 
-        file_menu.addAction(new_action)
-        file_menu.addAction(open_action)
+        file_menu.addAction(self.new_project_action)
+        file_menu.addAction(self.open_project_action)
         file_menu.addSeparator()
-        file_menu.addAction(save_action)
-        file_menu.addAction(save_as_action)
+        file_menu.addAction(self.save_project_action)
+        file_menu.addAction(self.save_as_action)
         file_menu.addSeparator()
-        file_menu.addAction(export_action)
+        file_menu.addAction(self.export_action)
         file_menu.addSeparator()
         file_menu.addAction(exit_action)
+
+        # Configuración inicial de estados
+        self.save_project_action.setEnabled(False)
+        self.save_as_action.setEnabled(False)
+        self.export_action.setEnabled(False)
 
         # Edit Menu
         edit_menu = QMenu("&Edit", self)
@@ -68,31 +73,31 @@ class MainMenu(QMenuBar):
 
         # Style the menu bar
         self.setStyleSheet("""
-            QMenuBar {
-                background-color: #2D2D2D;
-                color: #CCCCCC;
-            }
-            QMenuBar::item {
-                background-color: transparent;
-                padding: 4px 10px;
-            }
-            QMenuBar::item:selected {
-                background-color: #3D3D3D;
-            }
-            QMenu {
-                background-color: #2D2D2D;
-                color: #CCCCCC;
-                border: 1px solid #454545;
-            }
-            QMenu::item {
-                padding: 4px 20px;
-            }
-            QMenu::item:selected {
-                background-color: #3D3D3D;
-            }
-            QMenu::separator {
-                height: 1px;
-                background-color: #454545;
-                margin: 4px 0px;
-            }
-        """)
+             QMenuBar {
+                 background-color: #2D2D2D;
+                 color: #CCCCCC;
+             }
+             QMenuBar::item {
+                 background-color: transparent;
+                 padding: 4px 10px;
+             }
+             QMenuBar::item:selected {
+                 background-color: #3D3D3D;
+             }
+             QMenu {
+                 background-color: #2D2D2D;
+                 color: #CCCCCC;
+                 border: 1px solid #454545;
+             }
+             QMenu::item {
+                 padding: 4px 20px;
+             }
+             QMenu::item:selected {
+                 background-color: #3D3D3D;
+             }
+             QMenu::separator {
+                 height: 1px;
+                 background-color: #454545;
+                 margin: 4px 0px;
+             }
+         """)

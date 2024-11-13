@@ -10,7 +10,7 @@ class RuleValidator:
         }
 
         # Verificar estructura básica
-        required_fields = ["type", "category", "rules"]
+        required_fields = ["type", "category", "rules_managers"]
         for field in required_fields:
             if field not in rule_data:
                 validation_results["is_valid"] = False
@@ -21,8 +21,8 @@ class RuleValidator:
             validation_results["is_valid"] = False
 
         # Validar reglas específicas
-        if "rules" in rule_data:
-            rules = rule_data["rules"]
+        if "rules_managers" in rule_data:
+            rules = rule_data["rules_managers"]
             for rule_type, rule_content in rules.items():
                 if not RuleValidator.validate_specific_rule(rule_type, rule_content, validation_results):
                     validation_results["is_valid"] = False
@@ -277,7 +277,7 @@ class RuleValidator:
     @staticmethod
     def check_rules_coherence(rule_data, results):
         """Verificar la coherencia entre diferentes reglas"""
-        rules = rule_data.get("rules", {})
+        rules = rule_data.get("rules_managers", {})
 
         # Verificar coherencia entre conectividad y vecinos
         if "connectivity" in rules and "neighbors" in rules:
@@ -291,20 +291,20 @@ class RuleValidator:
             if ("target" in rules["percentage"] and
                 "maxOccurrences" in rules["frequency"]):
                 results["warnings"].append(
-                    "Percentage and frequency rules might conflict")
+                    "Percentage and frequency rules_managers might conflict")
 
         # Verificar coherencia entre agrupamiento y espaciado
         if "grouping" in rules and "spacing" in rules:
             if (rules["grouping"].get("minGroupSize", 1) > 1 and
                 rules["spacing"].get("minSpacing", 0) > 0):
                 results["warnings"].append(
-                    "Grouping and spacing rules might conflict")
+                    "Grouping and spacing rules_managers might conflict")
 
         # Verificar coherencia con reglas de borde
         if "border" in rules and rules["border"].get("mustBeBorder"):
             if "pattern" in rules:
                 results["warnings"].append(
-                    "Border and pattern rules might need special consideration")
+                    "Border and pattern rules_managers might need special consideration")
 
         # Verificar coherencia con simetría
         if "symmetry" in rules:

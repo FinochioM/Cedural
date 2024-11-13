@@ -5,7 +5,7 @@ from PySide6.QtCore import Signal, Qt
 
 
 class CategoryRulesEditor(QWidget):
-    rulesChanged = Signal(dict)  # Emits when rules are modified
+    rulesChanged = Signal(dict)  # Emits when rules_managers are modified
 
     def __init__(self, category_manager):
         super().__init__()
@@ -116,11 +116,11 @@ class CategoryRulesEditor(QWidget):
             self.neighbors_list.addItem(category)
 
     def update_rules(self):
-        """Collect all rules into a dictionary and emit signal"""
+        """Collect all rules_managers into a dictionary and emit signal"""
         if not self.current_category:
             return
 
-        # Collect rules
+        # Collect rules_managers
         rules = {
             "mustBeConnected": self.must_be_connected.isChecked(),
             "allowedNeighbors": [item.text() for item in
@@ -129,12 +129,12 @@ class CategoryRulesEditor(QWidget):
             "maxPercentage": self.max_percentage.value()
         }
 
-        # Update rules dictionary
+        # Update rules_managers dictionary
         self.rules[self.current_category] = rules
         self.rulesChanged.emit(self.rules)
 
     def load_category_rules(self, category_name):
-        """Load rules for selected category"""
+        """Load rules_managers for selected category"""
         self.current_category = category_name
 
         if category_name in self.rules:
@@ -149,7 +149,7 @@ class CategoryRulesEditor(QWidget):
             self.min_percentage.setValue(rules.get("minPercentage", 0))
             self.max_percentage.setValue(rules.get("maxPercentage", 100))
         else:
-            # Reset to defaults if no rules exist
+            # Reset to defaults if no rules_managers exist
             self.must_be_connected.setChecked(False)
             self.min_percentage.setValue(0)
             self.max_percentage.setValue(100)
